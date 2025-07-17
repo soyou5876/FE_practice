@@ -9,43 +9,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      -name: Checkout source
-      uses: actions/checkout@v3
+      - name: Checkout source
+        uses: actions/checkout@v3
 
-      -name: Setup Node.jobs
-      uses: actions.setup-node@v3
-      with: 
-      node-version: '18'
+      - name: Setup Node.jobs
+        uses: actions.setup-node@v3
+        with: 
+          node-version: '18'
 
-      -name: Install dependencies
-      run: npm CI
+      - name: Install dependencies
+        run: npm ci
 
-      -name: Set environment variables
-      run: |
-        echo "VITE_ID=${{ secrests.VITE_ID}}" >> .env
-        echo "VITE_PW=${{secrests.VITE_PW}}" >> .env
+      - name: Set environment variables
+        run: |
+          echo "VITE_ID=${{ secrests.VITE_ID}}" >> .env
+          echo "VITE_PW=${{secrests.VITE_PW}}" >> .env
       
-      -name: Build project
-      run: npm run build --mode production
+      - name: Build project
+        run: npm run build --mode production
 
-      -name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{secrests.AWS_ACCESS_KEY_ID}}
-        aws-secret-access-key: ${{secrest.AWS_SECRET_ACCESS_KEY}}
-        aws-region: ap-northreast-2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{secrests.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrest.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ap-northreast-2
 
-      -name: Deploy to s3
-      run: aws s3 sync./build s3://${{ secret.s3_BUCKET_NAME}} --delete
+      - name: Deploy to s3
+        run: aws s3 sync./build s3://${{ secret.s3_BUCKET_NAME}} --delete
 
-      -name: cloudFront Invalidate Cache
-      run: |
-        aws cloudfront create-invalidation \
-        --distribution-id ${{ secrests/CLOUDFRONT_DISTRIBUTION_ID }}
-        --paths "/*"
+      - name: cloudFront Invalidate Cache
+        run: |
+          aws cloudfront create-invalidation \
+          --distribution-id ${{ secrests/CLOUDFRONT_DISTRIBUTION_ID }}
+          --paths "/*"
 
-      env: 
-        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-        AWS_SECRET_ACCESS_KEY: ${{secret.AWS_SECRET_ACCESS_KEY}}
-        AWS_REGION: ap-northeast-2
+        env: 
+          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secret.AWS_SECRET_ACCESS_KEY}}
+          AWS_REGION: ap-northeast-2
 
